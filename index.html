@@ -171,12 +171,64 @@ li {
   margin: 20px 0;
 }
   
-  .artist-image {
+.artist-image {
   width: 100%;
   max-height: 250px;
   object-fit: contain;
   border-radius: 8px;
   margin-bottom: 15px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.artist-image:hover {
+  transform: scale(1.02);
+}
+
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border: 3px solid white;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+.close-lightbox {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-lightbox:hover {
+  color: var(--primary);
+}
+
+/* Optional: add a subtle zoom animation when opening */
+@keyframes zoomIn {
+  from {transform: scale(0.9); opacity: 0;}
+  to {transform: scale(1); opacity: 1;}
+}
+
+.lightbox img {
+  animation: zoomIn 0.3s;
 }
 
 .artwork-placeholder {
@@ -362,6 +414,52 @@ li {
     <p>Email your tutor before the next class if you need help.</p>
   </div>
 </div>
+
+<!-- Lightbox container -->
+<div id="imageLightbox" class="lightbox">
+  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+  <img id="lightboxImage">
+</div>
+
+<script>
+function openLightbox(imgSrc) {
+  const lightbox = document.getElementById('imageLightbox');
+  const lightboxImg = document.getElementById('lightboxImage');
+  
+  lightboxImg.src = imgSrc;
+  lightbox.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; // Prevent scrolling
+}
+
+function closeLightbox() {
+  document.getElementById('imageLightbox').style.display = 'none';
+  document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Close when clicking outside the image
+document.getElementById('imageLightbox').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeLightbox();
+  }
+});
+
+// Close on ESC key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeLightbox();
+  }
+});
+
+// Add click event to all artist images
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('.artist-image');
+  images.forEach(img => {
+    img.addEventListener('click', function() {
+      openLightbox(this.src);
+    });
+  });
+});
+</script>
 
 </body>
 </html>
